@@ -129,7 +129,7 @@ const viewEmployees = async () => {
                 FROM employee
                 LEFT JOIN role ON employee.role_id = role.id
                 LEFT JOIN department ON role.department_id = department.id
-                LEFT JOIN employee manager ON employee.manager_id = manager.idnode `;
+                LEFT JOIN employee manager ON employee.manager_id = manager.id`;
     db.query(query, function (err, result) {
       if (err) throw err;
       let employeeArray = [];
@@ -205,6 +205,117 @@ const addRole = async () => {
     });
 
     console.log(`${selection.title} role has been added to the database.`);
+    appHome();
+  } catch (err) {
+    console.log(err);
+    appHome();
+  }
+};
+
+const addEmployee = async () => {
+  console.log("Add An Employee.");
+  try {
+    let query = "SELECT * FROM role";
+    let query2 = "SELECT * FROM employee";
+    let roles = await db.query(query);
+    let managers = await db.query(query2);
+    let selection = await inquirer.prompt([
+      {
+        name: "first",
+        type: "input",
+        message: "Please type the First Name of this employee.",
+      },
+      {
+        name: "last",
+        type: "input",
+        message: "Please type the Last Name of this employee.",
+      },
+      {
+        name: "roleId",
+        type: "list",
+        message: "What Role does this employee have?",
+        choices: roles.map((role) => {
+          return {
+            name: role.title,
+            value: role.id,
+          };
+        }),
+      },
+      {
+        name: "managerId",
+        type: "list",
+        message: "Who does this employee report to?",
+        choices: managers.map(({ id, first_name, last_name }) => {
+          return {
+            name: first_name + " " + last_name,
+            value: id,
+          };
+        }),
+      },
+    ]);
+
+    let query3 = "INSERT INTO employee SET ?";
+    db.query(query3, {
+      first_name: selection.first,
+      last_name: selection.last,
+      role_id: selection.roleId,
+      manager_id: selection.managerId,
+    });
+
+    console.log(
+      `${selection.first} ${selection.last} has been added to the database.`
+    );
+    appHome();
+  } catch (err) {
+    console.log(err);
+    appHome();
+  }
+};
+
+const updateEmployee = async () => {
+  console.log("Add An Employee Role.");
+  try {
+    let query = "SELECT * FROM employee";
+    let employees = await db.query(query);
+    let employeeSelection = await inquirer.prompt([
+      {
+        name: "employee",
+        type: "list",
+        message:
+          "Please choose the employee whose role you would like to update.",
+        choices: employees.map(({ id, first_name, last_name }) => {
+          return {
+            name: first_name + " " + last_name,
+            value: id,
+          };
+        }),
+      },
+    ]);
+    let query2 = "SELECT * FROM role";
+    let roles = await db.query(query2);
+    let roleSelection = await inquirer.prompt([
+      {
+        name: "role",
+        type: "list",
+        message: "Please choose the role you want to assign to this employee.",
+        choices: roles.map((roleName) => {
+          return {
+            name: roleName.title,
+            value: roleName.id,
+          };
+        }),
+      },
+    ]);
+
+    let query3 = "UPDATE employee SET ? WHERE ?";
+    db.query(query3, [
+      {
+        role_id: roleSelection.role,
+      },
+      { id: employeeSelection.employee },
+    ]);
+
+    console.log(`Role updated!`);
     appHome();
   } catch (err) {
     console.log(err);
