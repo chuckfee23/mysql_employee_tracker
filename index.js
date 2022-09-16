@@ -10,7 +10,7 @@ const db = mysql.createConnection(
     host: "localhost",
     user: "root",
     // MySQL password
-    password: "Blackhawks23",
+    password: "",
     database: "employees",
   },
   console.log(`Connected to the courses_db database.`)
@@ -129,7 +129,7 @@ const viewEmployees = async () => {
                 FROM employee
                 LEFT JOIN role ON employee.role_id = role.id
                 LEFT JOIN department ON role.department_id = department.id
-                LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+                LEFT JOIN employee manager ON employee.manager_id = manager.idnode `;
     db.query(query, function (err, result) {
       if (err) throw err;
       let employeeArray = [];
