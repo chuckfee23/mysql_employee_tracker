@@ -22,6 +22,8 @@ This application requires node.js to run, and must include the npm packages in t
 
 The user is first prompted with a menu of the actions they can take. From there, they have the ability to View all Departments, View all Roles, and View all Employees. The user can also choose to add new records to the database from this menu as well, giving them the ability to Add new Departments, Roles and Employees (or change Employee Roles). If the user selects Exit, the session ends.
 
+![showing all employees](/Demo.png)
+
 ## Contributing
 
 N/A
